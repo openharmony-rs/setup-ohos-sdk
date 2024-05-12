@@ -18,8 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup SDK
-        uses: ./action.yml
-        id: setup_sdk
+        uses: ./
       - name: Test clang is installed
         run: "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
         shell: bash
