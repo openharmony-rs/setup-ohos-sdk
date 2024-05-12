@@ -26,6 +26,7 @@ runs:
   using: "composite"
   steps:
     - name: Debug
+      shell: bash
       run: echo "Cache ${{ inputs.cache }}, version ${{ inputs.version }}"
     - name: Cache SDK
       id: cache
