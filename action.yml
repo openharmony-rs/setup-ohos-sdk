@@ -21,7 +21,7 @@ outputs:
     value: ${{ steps.set_outputs.outputs.sdk-version }}
   api-version:
     description: "OpenHarmony API version of the SDK"
-    api-version: ${{ steps.set_outputs.outputs.api-version }}
+    value: ${{ steps.set_outputs.outputs.api-version }}
 runs:
   using: "composite"
   steps:
