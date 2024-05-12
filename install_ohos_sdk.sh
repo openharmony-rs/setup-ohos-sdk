@@ -31,10 +31,10 @@ echo "Downloading OHOS SDK from ${DOWNLOAD_URL}"
 
 curl --fail -L -o "${HOME}/openharmony-sdk.tar.gz" "${DOWNLOAD_URL}"
 cd "${HOME}"
-if [[ "${OS}" == "linux" ]]; then
-    tar -xvf openharmony-sdk.tar.gz --strip-components=2
+if [[ "${OS}" == "mac" ]]; then
+    tar -xf openharmony-sdk.tar.gz --strip-components=2
 else
-    tar -xvf openharmony-sdk.tar.gz
+    tar -xf openharmony-sdk.tar.gz
 fi
 rm openharmony-sdk.tar.gz
 cd ohos-sdk

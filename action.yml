@@ -8,7 +8,7 @@ inputs:
   cache:
     description: "Whether to cache the SDK or not"
     required: false
-    default: true
+    default: 'true'
 outputs:
   sdk-path:
     description: "Directory of the OpenHarmony SDK"
@@ -21,25 +21,25 @@ outputs:
     value: ${{ steps.set_outputs.outputs.sdk-version }}
   api-version:
     description: "OpenHarmony API version of the SDK"
-    api-version: ${{ steps.set_outputs.outputs.api-version }}
+    value: ${{ steps.set_outputs.outputs.api-version }}
 runs:
   using: "composite"
   steps:
-    - name: Set Greeting
-      run: echo "Hello ${{ inputs.version }}."
+    - name: Debug
       shell: bash
+      run: echo "Cache ${{ inputs.cache }}, version ${{ inputs.version }}"
     - name: Cache SDK
       id: cache
       uses: actions/cache@v4
       with:
-        path: ohos-sdk
+        path: ~/ohos-sdk
         key: ${{ runner.os }}-ohos-sdk-${{ inputs.version }}
-      if: ${{ inputs.cache }} == 'true'
+      if: ${{ inputs.cache == 'true' }}
     - name: Download and install OpenHarmony SDK
       id: install_ohos_sdk
       run: ./install_ohos_sdk.sh
       shell: bash
-      if: ${{ inputs.cache }} != 'true' || steps.cache.outputs.cache-hit != 'true'
+      if: ${{ inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true' }}
       env:
         INPUT_VERSION: "${{ inputs.version }}"
     - name: Set Outputs
@@ -47,7 +47,7 @@ runs:
       shell: bash
       run: |
         echo "sdk-path=$HOME/ohos-sdk" >> "$GITHUB_OUTPUT"
-        OHOS_SDK_NATIVE="$HOME/ohos-sdk/*/native"
+        OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/native && pwd)"
         echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
         echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
         cd "${OHOS_SDK_NATIVE}"
