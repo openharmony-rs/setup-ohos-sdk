@@ -47,7 +47,7 @@ runs:
       shell: bash
       run: |
         echo "sdk-path=$HOME/ohos-sdk" >> "$GITHUB_OUTPUT"
-        OHOS_SDK_NATIVE="$HOME/ohos-sdk/*/native"
+        OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/native && pwd)"
         echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
         echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
         cd "${OHOS_SDK_NATIVE}"
