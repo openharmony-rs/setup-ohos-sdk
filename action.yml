@@ -32,7 +32,7 @@ runs:
       id: cache
       uses: actions/cache@v4
       with:
-        path: ohos-sdk
+        path: ~/ohos-sdk
         key: ${{ runner.os }}-ohos-sdk-${{ inputs.version }}
       if: ${{ inputs.cache }} == 'true'
     - name: Download and install OpenHarmony SDK
