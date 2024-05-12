@@ -23,4 +23,4 @@ jobs:
         with:
           cache: false
       - name: Test
-        run: bash -c "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+        run: bash -c '"${OHOS_SDK_NATIVE}/llvm/bin/clang" --version'
