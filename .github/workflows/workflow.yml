@@ -22,3 +22,5 @@ jobs:
         uses: ./
         with:
           cache: false
+      - name: Test
+        run: echo "Hello"
