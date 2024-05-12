@@ -25,9 +25,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Set Greeting
-      run: echo "Hello ${{ inputs.version }}."
-      shell: bash
+    - name: Debug
+      run: echo "Cache ${{ inputs.cache }}, version ${{ inputs.version }}"
     - name: Cache SDK
       id: cache
       uses: actions/cache@v4
