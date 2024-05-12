@@ -19,7 +19,7 @@ jobs:
       - uses: ./
         id: setup_sdk
         with:
-          cache: false
+          cache: 'false'
       - name: Test clang is installed
         run: "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
         shell: bash
