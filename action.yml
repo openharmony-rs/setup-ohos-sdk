@@ -1,0 +1,58 @@
+name: 'Setup OpenHarmony SDK'
+description: 'Download an install the OpenHarmony SDK'
+inputs:
+  version:
+    description: 'OpenHarmony SDK release version'
+    required: false
+    default: '4.1'
+  cache:
+    description: "Whether to cache the SDK or not"
+    required: false
+    default: true
+outputs:
+  sdk-path:
+    description: "Directory of the OpenHarmony SDK"
+    value: ${{ steps.set_outputs.outputs.sdk-path }}
+  ohos_sdk_native:
+    description: "The `native` directory inside the OpenHarmony SDK"
+    value: ${{ steps.set_outputs.outputs.ohos_sdk_native }}
+  sdk-version:
+    description: "Specific version of the OpenHarmony SDK (e.g. 4.1.7.5)"
+    value: ${{ steps.set_outputs.outputs.sdk-version }}
+  api-version:
+    description: "OpenHarmony API version of the SDK"
+    api-version: ${{ steps.set_outputs.outputs.api-version }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set Greeting
+      run: echo "Hello ${{ inputs.version }}."
+      shell: bash
+    - name: Cache SDK
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ohos-sdk
+        key: ${{ runner.os }}-ohos-sdk-${{ inputs.version }}
+      if: ${{ inputs.cache }} == 'true'
+    - name: Download and install OpenHarmony SDK
+      id: install_ohos_sdk
+      run: ./install_ohos_sdk.sh
+      shell: bash
+      if: ${{ inputs.cache }} != 'true' || steps.cache.outputs.cache-hit != 'true'
+      env:
+        INPUT_VERSION: "${{ inputs.version }}"
+    - name: Set Outputs
+      id: set_outputs
+      shell: bash
+      run: |
+        echo "sdk-path=$HOME/ohos-sdk" >> "$GITHUB_OUTPUT"
+        OHOS_SDK_NATIVE="$HOME/ohos-sdk/*/native"
+        echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
+        echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
+        cd "${OHOS_SDK_NATIVE}"
+        SDK_VERSION="$(jq .version < oh-uni-package.json )"
+        API_VERSION="$(jq .apiVersion < oh-uni-package.json )"  
+        echo "sdk-version=${SDK_VERSION}" >> "$GITHUB_OUTPUT"
+        echo "api-version=${API_VERSION}" >> "$GITHUB_OUTPUT"
+

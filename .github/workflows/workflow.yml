@@ -1,0 +1,26 @@
+name: Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: ./
+        id: setup_sdk
+        with:
+          cache: false
+      - name: Test clang is installed
+        run: "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+        shell: bash
+
