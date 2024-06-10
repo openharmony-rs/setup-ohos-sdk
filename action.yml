@@ -37,7 +37,7 @@ runs:
       if: ${{ inputs.cache == 'true' }}
     - name: Download and install OpenHarmony SDK
       id: install_ohos_sdk
-      run: ./install_ohos_sdk.sh
+      run: ${{ github.action_path }}/install_ohos_sdk.sh
       shell: bash
       if: ${{ inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true' }}
       env:
