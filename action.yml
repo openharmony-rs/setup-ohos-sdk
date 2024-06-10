@@ -33,11 +33,16 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/ohos-sdk
-        key: ${{ runner.os }}-ohos-sdk-${{ inputs.version }}
+        key: "${{ runner.os }}-ohos-sdk-${{ inputs.version }}"
       if: ${{ inputs.cache == 'true' }}
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
     - name: Download and install OpenHarmony SDK
       id: install_ohos_sdk
-      run: ./install_ohos_sdk.sh
+      run: install_ohos_sdk.sh
       shell: bash
       if: ${{ inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true' }}
       env:
