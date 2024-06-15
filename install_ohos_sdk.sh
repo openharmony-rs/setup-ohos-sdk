@@ -22,7 +22,7 @@ elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" ==
         OS_FILENAME="ohos-sdk-windows_linux-public.tar.gz"
         OS=windows
 else
-        echo "Unknown OS type. The OHOS SDK is only available for Windows, Linux and Mqd."
+        echo "Unknown OS type. The OHOS SDK is only available for Windows, Linux and macOS."
 fi
 
 DOWNLOAD_URL="${URL_BASE}/${INPUT_VERSION}-Release/${OS_FILENAME}"
