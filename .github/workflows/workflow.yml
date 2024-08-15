@@ -19,8 +19,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup SDK
+        id: initial-setup
         uses: ./
         with:
           cache: false
       - name: Test
         run: bash -c '"${OHOS_SDK_NATIVE}/llvm/bin/clang" --version'
+      - name: Remove previous SDK installation
+        env:
+          SDK_PATH: "${{ steps.initial-setup.outputs.sdk-path }}"
+        run: bash -c 'rm -rf "${SDK_PATH}"'
+      - name: Setup SDK with Components
+        id: sdk-with-components
+        uses: ./
+        with:
+          components: "native;toolchains"
+      - name: Test
+        shell: bash
+        env:
+          SDK_PATH: "${{ steps.sdk-with-components.outputs.sdk-path }}"
+        run: |
+          ${OHOS_SDK_NATIVE}/llvm/bin/clang --version
+          ${SDK_PATH}/*/toolchains/hdc --version

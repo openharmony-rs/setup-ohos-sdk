@@ -9,6 +9,10 @@ inputs:
     description: "Whether to cache the SDK or not"
     required: false
     default: 'true'
+  components:
+    description: "Semicolon separated list of SDK components that should be made available"
+    required: false
+    default: 'native'
 outputs:
   sdk-path:
     description: "Directory of the OpenHarmony SDK"
@@ -47,6 +51,7 @@ runs:
       if: ${{ inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true' }}
       env:
         INPUT_VERSION: "${{ inputs.version }}"
+        INPUT_COMPONENTS: "${{ inputs.components }}"
     - name: Set Outputs
       id: set_outputs
       shell: bash
