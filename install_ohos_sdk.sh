@@ -49,10 +49,10 @@ else
     cd darwin
 fi
 
-# Todo: expose available components via an input variable.
-# For now just extract native, to save disk space
-
-unzip native-*.zip
+IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
+for COMPONENT in ${COMPONENTS[@]}
+do
+    echo "Extracting component ${COMPONENT}"
+    unzip ${COMPONENT}-*.zip
+done
 rm ./*.zip
-
-cd native
