@@ -34,6 +34,7 @@ jobs:
         uses: ./
         with:
           components: "native;toolchains"
+          cache: false
       - name: Test
         shell: bash
         env:
@@ -41,3 +42,20 @@ jobs:
         run: |
           ${OHOS_SDK_NATIVE}/llvm/bin/clang --version
           ${SDK_PATH}/*/toolchains/hdc --version
+      - name: Remove previous SDK installation
+        env:
+          SDK_PATH: "${{ steps.sdk-with-components.outputs.sdk-path }}"
+        run: bash -c 'rm -rf "${SDK_PATH}"'
+      - name: Setup SDK and fixup the path
+        id: sdk-with-fixup
+        uses: ./
+        with:
+          fixup-path: true
+          cache: false
+      - name: Test
+        shell: bash
+        env:
+          SDK_PATH: "${{ steps.sdk-with-fixup.outputs.sdk-path }}"
+          API_VERSION: "${{ steps.sdk-with-fixup.outputs.api-version }}"
+        run: |
+          ${SDK_PATH}/*/${API_VERSION}/native/llvm/bin/clang --version
