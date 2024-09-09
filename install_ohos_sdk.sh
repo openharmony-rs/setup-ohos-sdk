@@ -3,6 +3,7 @@
 set -eu
 
 : "${INPUT_VERSION:?INPUT_VERSION needs to be set}"
+: "${INPUT_STAGE:?INPUT_STAGE needs to be set}"
 
 # https://repo.huaweicloud.com/openharmony/os/4.0-Release/ohos-sdk-windows_linux-public.tar.gz
 
@@ -25,7 +26,7 @@ else
         echo "Unknown OS type. The OHOS SDK is only available for Windows, Linux and macOS."
 fi
 
-DOWNLOAD_URL="${URL_BASE}/${INPUT_VERSION}-Release/${OS_FILENAME}"
+DOWNLOAD_URL="${URL_BASE}/${INPUT_VERSION}-${INPUT_STAGE}/${OS_FILENAME}"
 
 echo "Downloading OHOS SDK from ${DOWNLOAD_URL}"
 
@@ -50,14 +51,14 @@ else
 fi
 
 IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
-for COMPONENT in ${COMPONENTS[@]}
+for COMPONENT in "${COMPONENTS[@]}"
 do
     echo "Extracting component ${COMPONENT}"
-    unzip ${COMPONENT}-*.zip
-    API_VERSION=$(cat ${COMPONENT}/oh-uni-package.json | jq -r '.apiVersion')
+    unzip "${COMPONENT}"-*.zip
+    API_VERSION=$(cat "${COMPONENT}/oh-uni-package.json" | jq -r '.apiVersion')
     if [ "$INPUT_FIXUP_PATH" = "true" ]; then
-        mkdir -p ${API_VERSION}
-        mv ${COMPONENT} "${API_VERSION}/"
+        mkdir -p "${API_VERSION}"
+        mv "${COMPONENT}" "${API_VERSION}/"
     fi
 done
 rm ./*.zip

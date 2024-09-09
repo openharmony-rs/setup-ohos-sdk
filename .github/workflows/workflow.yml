@@ -9,6 +9,29 @@ on:
       - main
 
 jobs:
+  download_urls:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        sdk:
+          - version: '4.0'
+            stage: 'Release'
+          - version: '4.1'
+            stage: 'Release'
+          - version: '5.0'
+            stage: 'Beta1'
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup SDK
+        id: initial-setup
+        uses: ./
+        with:
+          cache: false
+          version: ${{ matrix.sdk.version }}
+          stage: ${{ matrix.sdk.stage }}
   build:
     strategy:
       matrix:
