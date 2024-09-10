@@ -68,10 +68,18 @@ runs:
       run: |
         echo "sdk-path=$HOME/ohos-sdk" >> "$GITHUB_OUTPUT"
         OHOS_BASE_SDK_HOME=$(cd $HOME/ohos-sdk/*/ && pwd)
+        if [ ! -d "${OHOS_BASE_SDK_HOME}" ]; then
+            echo "Error: Failed to resolve base SDK directory"
+            exit 1
+        fi
         if [ "${INPUT_FIXUP_PATH}" = "true" ]; then
           OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/*/native && pwd)"
         else
           OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/native && pwd)"
+        fi
+        if [ ! -d "${OHOS_SDK_NATIVE}" ]; then
+            echo "Error: Failed to resolve SDK native directory"
+            exit 1
         fi
         cd "${OHOS_SDK_NATIVE}"
         SDK_VERSION="$(jq -r .version < oh-uni-package.json )"
