@@ -40,8 +40,8 @@ runs:
       shell: bash
       run: echo "Cache ${{ inputs.cache }}, version ${{ inputs.version }}, components ${{ inputs.components }}, fixup ${{ inputs.fixup-path }}"
     - name: Cache SDK
-      id: cache
-      uses: actions/cache@v4
+      id: restore-cache
+      uses: actions/cache/restore@v4
       with:
         path: ~/ohos-sdk
         key: "${{ runner.os }}-ohos-sdk-${{ inputs.version }}-${{ inputs.components }}-${{ inputs.fixup-path }}"
@@ -90,4 +90,9 @@ runs:
         echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
         echo "sdk-version=${SDK_VERSION}" >> "$GITHUB_OUTPUT"
         echo "api-version=${API_VERSION}" >> "$GITHUB_OUTPUT"
+    - name: Save cache
+      uses: actions/cache/save@v4
+      with:
+        path: ~/ohos-sdk
+        key: ${{ steps.restore-cache.outputs.cache-primary-key }}
 
