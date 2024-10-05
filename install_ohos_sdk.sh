@@ -50,14 +50,14 @@ else
 fi
 
 IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
-for COMPONENT in ${COMPONENTS[@]}
+for COMPONENT in "${COMPONENTS[@]}"
 do
     echo "Extracting component ${COMPONENT}"
-    unzip ${COMPONENT}-*.zip
-    API_VERSION=$(cat ${COMPONENT}/oh-uni-package.json | jq -r '.apiVersion')
+    unzip "${COMPONENT}"-*.zip
+    API_VERSION=$(cat "${COMPONENT}/oh-uni-package.json" | jq -r '.apiVersion')
     if [ "$INPUT_FIXUP_PATH" = "true" ]; then
-        mkdir -p ${API_VERSION}
-        mv ${COMPONENT} "${API_VERSION}/"
+        mkdir -p "${API_VERSION}"
+        mv "${COMPONENT}" "${API_VERSION}/"
     fi
 done
 rm ./*.zip
