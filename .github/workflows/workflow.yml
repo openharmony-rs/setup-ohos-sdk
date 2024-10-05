@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
+        version: [ "4.0", "4.1", "5.0"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -23,6 +24,7 @@ jobs:
         uses: ./
         with:
           cache: false
+          version: ${{ matrix.version }}
       - name: Test
         run: bash -c '"${OHOS_SDK_NATIVE}/llvm/bin/clang" --version'
       - name: Remove previous SDK installation
@@ -35,6 +37,7 @@ jobs:
         with:
           components: "native;toolchains"
           cache: false
+          version: ${{ matrix.version }}
       - name: Test
         shell: bash
         env:
@@ -52,6 +55,7 @@ jobs:
         with:
           fixup-path: true
           cache: false
+          version: ${{ matrix.version }}
       - name: Test
         shell: bash
         env:
