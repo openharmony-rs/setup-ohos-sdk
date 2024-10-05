@@ -24,19 +24,19 @@ inputs:
 outputs:
   sdk-path:
     description: "Root directory of the OpenHarmony SDK installation"
-    value: ${{ steps.set_outputs.outputs.sdk-path }}
+    value: ${{ steps.install_ohos_sdk.outputs.sdk-path }}
   ohos_sdk_native:
     description: "The `native` directory inside the OpenHarmony SDK"
-    value: ${{ steps.set_outputs.outputs.ohos_sdk_native }}
+    value: ${{ steps.install_ohos_sdk.outputs.ohos_sdk_native }}
   sdk-version:
     description: "Specific version of the OpenHarmony SDK (e.g. 4.1.7.5)"
-    value: ${{ steps.set_outputs.outputs.sdk-version }}
+    value: ${{ steps.install_ohos_sdk.outputs.sdk-version }}
   api-version:
     description: "OpenHarmony API version of the SDK"
-    value: ${{ steps.set_outputs.outputs.api-version }}
+    value: ${{ steps.install_ohos_sdk.outputs.api-version }}
   ohos-base-sdk-home:
     description: "Path to the OpenHarmony SDK for the host platform"
-    value: ${{ steps.set_outputs.outputs.ohos-base-sdk-home }}
+    value: ${{ steps.install_ohos_sdk.outputs.ohos-base-sdk-home }}
 runs:
   using: "composite"
   steps:
@@ -66,26 +66,4 @@ runs:
         INPUT_FIXUP_PATH: ${{ inputs.fixup-path }}
         INPUT_MIRROR: "${{ inputs.mirror }}"
         GH_TOKEN: "${{ github.token }}"
-    - name: Set Outputs
-      id: set_outputs
-      shell: bash
-      env:
-        INPUT_FIXUP_PATH: ${{ inputs.fixup-path }}
-      run: |
-        echo "sdk-path=$HOME/ohos-sdk" >> "$GITHUB_OUTPUT"
-        OHOS_BASE_SDK_HOME=$(cd $HOME/ohos-sdk/*/ && pwd)
-        if [ "${INPUT_FIXUP_PATH}" = "true" ]; then
-          OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/*/native && pwd)"
-        else
-          OHOS_SDK_NATIVE="$(cd $HOME/ohos-sdk/*/native && pwd)"
-        fi
-        cd "${OHOS_SDK_NATIVE}"
-        SDK_VERSION="$(jq -r .version < oh-uni-package.json )"
-        API_VERSION="$(jq -r .apiVersion < oh-uni-package.json )"
-        echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_ENV"
-        echo "ohos-base-sdk-home=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_OUTPUT"
-        echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
-        echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
-        echo "sdk-version=${SDK_VERSION}" >> "$GITHUB_OUTPUT"
-        echo "api-version=${API_VERSION}" >> "$GITHUB_OUTPUT"
 

@@ -27,7 +27,9 @@ else
         exit 1
 fi
 
-cd "${HOME}"
+WORK_DIR="${HOME}/setup-ohos-sdk"
+mkdir -p "${WORK_DIR}"
+cd "${WORK_DIR}"
 
 MIRROR_DOWNLOAD_SUCCESS=false
 if [[ "${INPUT_MIRROR}" == "true" || "${INPUT_MIRROR}" == "force" ]]; then
@@ -69,6 +71,7 @@ else
 fi
 rm "${OS_FILENAME}" "${OS_FILENAME}.sha256"
 cd ohos-sdk
+echo "sdk-path=$PWD" >> "${GITHUB_OUTPUT}"
 
 if [[ "${OS}" == "linux" ]]; then
     rm -rf windows
@@ -80,11 +83,15 @@ else
     cd darwin
 fi
 
+OHOS_BASE_SDK_HOME="$PWD"
+
 IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
 for COMPONENT in "${COMPONENTS[@]}"
 do
     echo "Extracting component ${COMPONENT}"
+    echo "::group::Unzipping archive"
     unzip "${COMPONENT}"-*.zip
+    echo "::endgroup::"
     API_VERSION=$(cat "${COMPONENT}/oh-uni-package.json" | jq -r '.apiVersion')
     if [ "$INPUT_FIXUP_PATH" = "true" ]; then
         mkdir -p "${API_VERSION}"
@@ -92,3 +99,18 @@ do
     fi
 done
 rm ./*.zip
+
+if [ "${INPUT_FIXUP_PATH}" = "true" ]; then
+  OHOS_SDK_NATIVE="${OHOS_BASE_SDK_HOME}/${API_VERSION}/native"
+else
+  OHOS_SDK_NATIVE="${OHOS_BASE_SDK_HOME}/native"
+fi
+cd "${OHOS_SDK_NATIVE}"
+SDK_VERSION="$(jq -r .version < oh-uni-package.json )"
+API_VERSION="$(jq -r .apiVersion < oh-uni-package.json )"
+echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_ENV"
+echo "ohos-base-sdk-home=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_OUTPUT"
+echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
+echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
+echo "sdk-version=${SDK_VERSION}" >> "$GITHUB_OUTPUT"
+echo "api-version=${API_VERSION}" >> "$GITHUB_OUTPUT"
