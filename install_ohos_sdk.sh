@@ -90,17 +90,37 @@ fi
 
 OHOS_BASE_SDK_HOME="$PWD"
 
-IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
+if [[ "${INPUT_COMPONENTS}" == "all" ]]; then
+  COMPONENTS=(*.zip)
+else
+  IFS=";" read -ra COMPONENTS <<< "${INPUT_COMPONENTS}"
+  resolved_components=()
+  for COMPONENT in "${COMPONENTS[@]}"
+  do
+    resolved_components+=("${COMPONENT}"-*.zip)
+  done
+  COMPONENTS=(${resolved_components[@]})
+fi
+
 for COMPONENT in "${COMPONENTS[@]}"
 do
     echo "Extracting component ${COMPONENT}"
     echo "::group::Unzipping archive"
-    unzip "${COMPONENT}"-*.zip
+    #shellcheck disable=SC2144
+    if [[ -f "${COMPONENT}" ]]; then
+      unzip "${COMPONENT}"
+    else
+      echo "Failed to find component ${COMPONENT}"
+      ls -la
+      exit 1
+    fi
     echo "::endgroup::"
-    API_VERSION=$(cat "${COMPONENT}/oh-uni-package.json" | jq -r '.apiVersion')
+    # Removing everything after the first dash should give us the component dir
+    component_dir=${COMPONENT%%-*}
+    API_VERSION=$(cat "${component_dir}/oh-uni-package.json" | jq -r '.apiVersion')
     if [ "$INPUT_FIXUP_PATH" = "true" ]; then
         mkdir -p "${API_VERSION}"
-        mv "${COMPONENT}" "${API_VERSION}/"
+        mv "${component_dir}" "${API_VERSION}/"
     fi
 done
 rm ./*.zip
