@@ -62,15 +62,20 @@ if [[ "${MIRROR_DOWNLOAD_SUCCESS}" != "true" ]]; then
   curl --fail -L -O "${DOWNLOAD_URL}.sha256"
 fi
 
+VERSION_MAJOR=${INPUT_VERSION%%.*}
+
 if [[ "${OS}" == "mac" ]]; then
     echo "$(cat "${OS_FILENAME}".sha256)  ${OS_FILENAME}" | shasum -a 256 --check --status
-    tar -xf "${OS_FILENAME}" --strip-components=2
+    tar -xf "${OS_FILENAME}" --strip-components=3
 else
     echo "$(cat "${OS_FILENAME}".sha256) ${OS_FILENAME}" | sha256sum --check --status
-    tar -xf "${OS_FILENAME}"
+    if (( VERSION_MAJOR >= 5 )); then
+      tar -xf "${OS_FILENAME}"
+    else
+      tar -xf "${OS_FILENAME}" --strip-components=1
+    fi
 fi
 rm "${OS_FILENAME}" "${OS_FILENAME}.sha256"
-cd ohos-sdk
 echo "sdk-path=$PWD" >> "${GITHUB_OUTPUT}"
 
 if [[ "${OS}" == "linux" ]]; then
