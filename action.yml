@@ -12,7 +12,7 @@ inputs:
   components:
     description: "Semicolon separated list of SDK components that should be made available"
     required: false
-    default: 'native'
+    default: 'all'
   fixup-path:
     description: "Whether to fixup the output paths so that the components appear under api level directory"
     required: false

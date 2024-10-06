@@ -44,7 +44,10 @@ jobs:
           SDK_PATH: "${{ steps.sdk-with-components.outputs.sdk-path }}"
         run: |
           ${OHOS_SDK_NATIVE}/llvm/bin/clang --version
-          ${SDK_PATH}/*/toolchains/hdc --version
+          if [[ -d "${test}/previewer" ]]; then
+            echo "Unselected component should not be present"
+            exit 1
+          fi
       - name: Remove previous SDK installation
         env:
           SDK_PATH: "${{ steps.sdk-with-components.outputs.sdk-path }}"
