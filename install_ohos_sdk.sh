@@ -106,8 +106,10 @@ done
 rm ./*.zip
 
 if [ "${INPUT_FIXUP_PATH}" = "true" ]; then
+  OHOS_NDK_HOME="${OHOS_BASE_SDK_HOME}/${API_VERSION}"
   OHOS_SDK_NATIVE="${OHOS_BASE_SDK_HOME}/${API_VERSION}/native"
 else
+  OHOS_NDK_HOME="${OHOS_BASE_SDK_HOME}"
   OHOS_SDK_NATIVE="${OHOS_BASE_SDK_HOME}/native"
 fi
 cd "${OHOS_SDK_NATIVE}"
@@ -115,6 +117,7 @@ SDK_VERSION="$(jq -r .version < oh-uni-package.json )"
 API_VERSION="$(jq -r .apiVersion < oh-uni-package.json )"
 echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_ENV"
 echo "ohos-base-sdk-home=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_OUTPUT"
+echo "OHOS_NDK_HOME=${OHOS_NDK_HOME}" >> "$GITHUB_ENV"
 echo "OHOS_SDK_NATIVE=${OHOS_SDK_NATIVE}" >> "$GITHUB_ENV"
 echo "ohos_sdk_native=${OHOS_SDK_NATIVE}" >> "$GITHUB_OUTPUT"
 echo "sdk-version=${SDK_VERSION}" >> "$GITHUB_OUTPUT"
