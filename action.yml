@@ -17,6 +17,10 @@ inputs:
     description: "Whether to fixup the output paths so that the components appear under api level directory"
     required: false
     default: false
+  mirror:
+    description: "Prefer downloading from Github Releases SDK mirror"
+    required: false
+    default: 'true'
 outputs:
   sdk-path:
     description: "Root directory of the OpenHarmony SDK installation"
@@ -60,6 +64,8 @@ runs:
         INPUT_VERSION: "${{ inputs.version }}"
         INPUT_COMPONENTS: "${{ inputs.components }}"
         INPUT_FIXUP_PATH: ${{ inputs.fixup-path }}
+        INPUT_MIRROR: "${{ inputs.mirror }}"
+        GH_TOKEN: "${{ github.token }}"
     - name: Set Outputs
       id: set_outputs
       shell: bash
