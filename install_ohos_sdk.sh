@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-set -eu
+set -eux
 
 : "${INPUT_VERSION:?INPUT_VERSION needs to be set}"
+: "${INPUT_MIRROR:?INPUT_MIRROR needs to be set}"
 
 # https://repo.huaweicloud.com/openharmony/os/4.0-Release/ohos-sdk-windows_linux-public.tar.gz
 
@@ -23,20 +24,50 @@ elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" ==
         OS=windows
 else
         echo "Unknown OS type. The OHOS SDK is only available for Windows, Linux and macOS."
+        exit 1
 fi
 
-DOWNLOAD_URL="${URL_BASE}/${INPUT_VERSION}-Release/${OS_FILENAME}"
-
-echo "Downloading OHOS SDK from ${DOWNLOAD_URL}"
-
-curl --fail -L -o "${HOME}/openharmony-sdk.tar.gz" "${DOWNLOAD_URL}"
 cd "${HOME}"
-if [[ "${OS}" == "mac" ]]; then
-    tar -xf openharmony-sdk.tar.gz --strip-components=2
-else
-    tar -xf openharmony-sdk.tar.gz
+
+MIRROR_DOWNLOAD_SUCCESS=false
+if [[ "${INPUT_MIRROR}" == "true" || "${INPUT_MIRROR}" == "force" ]]; then
+  gh release download "v${INPUT_VERSION}" --pattern "${OS_FILENAME}*" --repo openharmony-rs/ohos-sdk && MIRROR_DOWNLOAD_SUCCESS=true
+  if [[ "${MIRROR_DOWNLOAD_SUCCESS}" == "true" ]]; then
+    # The mirror may have split the archives due to the Github releases size limits.
+    # First rename the sha256 file, so we don't glob it.
+    mv "${OS_FILENAME}.sha256" "sha256.${OS_FILENAME}"
+    # Now get all the .aa .ab etc. output of the split command for our filename
+    shopt -s nullglob
+    split_files=("${OS_FILENAME}".*)
+    if [ ${#split_files[@]} -ne  0 ]; then
+      cat "${split_files[@]}" > "${OS_FILENAME}"
+      rm "${split_files[@]}"
+    fi
+    # Rename the shafile back again to the original name
+    mv "sha256.${OS_FILENAME}" "${OS_FILENAME}.sha256"
+  elif [[ "${INPUT_MIRROR}" == "force" ]]; then
+    echo "Downloading from mirror failed, and mirror=force. Failing the job."
+    echo "Note: mirror=force is for internal test purposes, and should not be selected by users."
+    exit 1
+  else
+    echo "Failed to download SDK from mirror. Falling back to downloading from upstream."
+  fi
 fi
-rm openharmony-sdk.tar.gz
+if [[ "${MIRROR_DOWNLOAD_SUCCESS}" != "true" ]]; then
+  DOWNLOAD_URL="${URL_BASE}/${INPUT_VERSION}-Release/${OS_FILENAME}"
+  echo "Downloading OHOS SDK from ${DOWNLOAD_URL}"
+  curl --fail -L -O "${DOWNLOAD_URL}"
+  curl --fail -L -O "${DOWNLOAD_URL}.sha256"
+fi
+
+if [[ "${OS}" == "mac" ]]; then
+    echo "$(cat "${OS_FILENAME}".sha256)  ${OS_FILENAME}" | shasum -a 256 --check --status
+    tar -xf "${OS_FILENAME}" --strip-components=2
+else
+    echo "$(cat "${OS_FILENAME}".sha256) ${OS_FILENAME}" | sha256sum --check --status
+    tar -xf "${OS_FILENAME}"
+fi
+rm "${OS_FILENAME}" "${OS_FILENAME}.sha256"
 cd ohos-sdk
 
 if [[ "${OS}" == "linux" ]]; then
