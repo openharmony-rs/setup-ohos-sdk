@@ -66,4 +66,3 @@ runs:
         INPUT_FIXUP_PATH: ${{ inputs.fixup-path }}
         INPUT_MIRROR: "${{ inputs.mirror }}"
         GH_TOKEN: "${{ github.token }}"
-
