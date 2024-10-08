@@ -59,10 +59,11 @@ runs:
       id: install_ohos_sdk
       run: install_ohos_sdk.sh
       shell: bash
-      if: ${{ inputs.cache != 'true' || steps.cache.outputs.cache-hit != 'true' }}
       env:
         INPUT_VERSION: "${{ inputs.version }}"
         INPUT_COMPONENTS: "${{ inputs.components }}"
         INPUT_FIXUP_PATH: ${{ inputs.fixup-path }}
         INPUT_MIRROR: "${{ inputs.mirror }}"
+        INPUT_CACHE: "${{ inputs.cache }}"
+        INPUT_WAS_CACHED: "${{ steps.cache.outputs.cache-hit }}"
         GH_TOKEN: "${{ github.token }}"
