@@ -25,12 +25,33 @@ jobs:
         with:
           cache: false
           version: ${{ matrix.version }}
+          fixup-path: 'false'
       - name: Test
-        run: bash -c '"${OHOS_SDK_NATIVE}/llvm/bin/clang" --version'
+        shell: bash
+        run: |
+          "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+          ${{steps.initial-setup.outputs.ohos_sdk_native}}/llvm/bin/clang --version
+      - name: Simulate action on cache-hit
+        run: ./install_ohos_sdk.sh
+        shell: bash
+        env:
+          INPUT_VERSION: "${{ matrix.version }}"
+          INPUT_COMPONENTS: "all"
+          INPUT_FIXUP_PATH: "false"
+          INPUT_MIRROR: "true"
+          INPUT_CACHE: "true"
+          INPUT_WAS_CACHED: "true"
+          GH_TOKEN: "${{ github.token }}"
+      - name: Test
+        shell: bash
+        run: |
+          "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+          ${{steps.initial-setup.outputs.ohos_sdk_native}}/llvm/bin/clang --version
       - name: Remove previous SDK installation
+        shell: bash
         env:
           SDK_PATH: "${{ steps.initial-setup.outputs.sdk-path }}"
-        run: bash -c 'rm -rf "${SDK_PATH}"'
+        run: rm -rf "${SDK_PATH}"
       - name: Setup SDK with Components
         id: sdk-with-components
         uses: ./
@@ -49,9 +70,10 @@ jobs:
             exit 1
           fi
       - name: Remove previous SDK installation
+        shell: bash
         env:
           SDK_PATH: "${{ steps.sdk-with-components.outputs.sdk-path }}"
-        run: bash -c 'rm -rf "${SDK_PATH}"'
+        run: rm -rf "${SDK_PATH}"
       - name: Setup SDK and fixup the path
         id: sdk-with-fixup
         uses: ./
@@ -65,7 +87,29 @@ jobs:
           SDK_PATH: "${{ steps.sdk-with-fixup.outputs.sdk-path }}"
           API_VERSION: "${{ steps.sdk-with-fixup.outputs.api-version }}"
         run: |
-          ${SDK_PATH}/*/${API_VERSION}/native/llvm/bin/clang --version
+          cd "${SDK_PATH}/*/${API_VERSION}/native/llvm/bin" && clang --version && cd -
+          "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+      - name: Simulate action on cache-hit
+        id: on_cache_hit_with_fixup
+        run: ./install_ohos_sdk.sh
+        shell: bash
+        env:
+          INPUT_VERSION: "${{ matrix.version }}"
+          INPUT_COMPONENTS: "all"
+          INPUT_FIXUP_PATH: "true"
+          INPUT_MIRROR: "true"
+          INPUT_CACHE: "true"
+          INPUT_WAS_CACHED: "true"
+          GH_TOKEN: "${{ github.token }}"
+      - name: Test
+        shell: bash
+        env:
+          SDK_PATH: "${{ steps.on_cache_hit_with_fixup.outputs.sdk-path }}"
+          API_VERSION: "${{ steps.on_cache_hit_with_fixup.outputs.api-version }}"
+        run: |
+          cd "${SDK_PATH}/*/${API_VERSION}/native/llvm/bin" && clang --version && cd -
+          "${OHOS_SDK_NATIVE}/llvm/bin/clang" --version
+          ${{steps.on_cache_hit_with_fixup.outputs.ohos_sdk_native}}/llvm/bin/clang --version
 
 
   build_result:
