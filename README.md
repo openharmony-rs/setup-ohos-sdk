@@ -24,18 +24,18 @@ jobs:
 
 **inputs**:
 
-| Name       | Type    | Default | Description                                                                                                                |
-|------------|---------|---------|----------------------------------------------------------------------------------------------------------------------------|
-| version    | String  | 4.1     | Version of the OpenHarmony SDK (e.g. `4.0`, `4.1` or `5.0`)                                                                |
-| cache      | Boolean | true    | Uses the GitHub actions cache to cache the SDK when enabled.                                                               |
-| components | String  | all     | SDK components that should be added. `all` or semicolon seperated list of components.                                      |
-| mirror     | Boolean | true    | Download from Github Releases mirror of the SDK if possible.                                                               |
+| Name       | Type    | Default | Description                                                                           |
+|------------|---------|---------|---------------------------------------------------------------------------------------|
+| version    | String  | 5.0.0   | Version of the OpenHarmony SDK (e.g. `4.0`, `4.1`, `5.0.0` or `5.0.1`)                |
+| cache      | Boolean | true    | Uses the GitHub actions cache to cache the SDK when enabled.                          |
+| components | String  | all     | SDK components that should be added. `all` or semicolon seperated list of components. |
+| mirror     | Boolean | true    | Download from Github Releases mirror of the SDK if possible.                          |
 
 **outputs**:
 
 
-| Name            | Type   | Description                                            |
-|-----------------|--------|--------------------------------------------------------|
-| api-version     | String | API Version of the SDK (e.g. `12` for OpenHarmony 5.0) |
-| sdk-version     | String | Specific SDK version (e.g. `4.1.7.5`)                  |
-| ohos_sdk_native | String | Path to the `native` directory in the OpenHarmony SDK. |
+| Name            | Type   | Description                                                                             |
+|-----------------|--------|-----------------------------------------------------------------------------------------|
+| api-version     | String | API Version of the SDK (e.g. `12` for OpenHarmony 5.0.0, or `13` for OpenHarmony 5.0.1) |
+| sdk-version     | String | Specific SDK version (e.g. `4.1.7.5`)                                                   |
+| ohos_sdk_native | String | Path to the `native` directory in the OpenHarmony SDK.                                  |
