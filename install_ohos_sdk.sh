@@ -31,31 +31,6 @@ WORK_DIR="${HOME}/setup-ohos-sdk"
 mkdir -p "${WORK_DIR}"
 cd "${WORK_DIR}"
 
-# RESOLVED_MIRROR_VERSION_TAG is both in- and output of this function.
-# If the user provides a version like `5.0`, we try to resolve the version to something more specific like `5.0.0`,
-# since we can't easily have aliasing releases on Github. (e.g. 5.0 pointing to the latest 5.0.x release)
-function select_version() {
-  local base_tag_version="${RESOLVED_MIRROR_VERSION_TAG}"
-  local available_releases
-  local exact_version_res
-  local latest_compatible_version
-  available_releases=$(gh release list --repo openharmony-rs/ohos-sdk --json 'tagName')
-  # Note: jq doesn't seem to return an error if select doesn't find anything
-  exact_version_res=$(jq ".[] | select(.tagName == \"${base_tag_version}\")" <<< "${available_releases}")
-  if [[ -n "${exact_version_res}" ]]; then
-    # If we found an exactly matching release, then we don't need to do anything.
-    return 0
-  fi
-  # Otherwise, get the first (== latest) release matching the start of our version tag (e.g. `5.0.3` for input `5.0`)
-  latest_compatible_version=$(jq "[.[] | select(.tagName | startswith(\"${base_tag_version}.\"))][0].tagName" <<< "${available_releases}" | tr -d '"')
-  if [[ -n "${latest_compatible_version}" ]]; then
-    echo "Resolved version ${base_tag_version} to release ${latest_compatible_version}"
-    RESOLVED_MIRROR_VERSION_TAG="${latest_compatible_version}"
-  else
-    echo "Couldn't find any compatible release on the mirror."
-  fi
-}
-
 # Assumption: cwd contains the zipped components.
 # Outputs: API_VERSION
 function extract_sdk_components() {
@@ -99,7 +74,6 @@ function download_and_extract_sdk() {
     MIRROR_DOWNLOAD_SUCCESS=false
     if [[ "${INPUT_MIRROR}" == "true" || "${INPUT_MIRROR}" == "force" ]]; then
       RESOLVED_MIRROR_VERSION_TAG="v${INPUT_VERSION}"
-      select_version # This will update RESOLVED_MIRROR_VERSION_TAG.
       gh release download "${RESOLVED_MIRROR_VERSION_TAG}" --pattern "${OS_FILENAME}*" --repo openharmony-rs/ohos-sdk && MIRROR_DOWNLOAD_SUCCESS=true
       if [[ "${MIRROR_DOWNLOAD_SUCCESS}" == "true" ]]; then
         # The mirror may have split the archives due to the Github releases size limits.

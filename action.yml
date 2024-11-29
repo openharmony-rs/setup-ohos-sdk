@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'OpenHarmony SDK release version'
     required: false
-    default: '4.1'
+    default: '5.0.0'
   cache:
     description: "Whether to cache the SDK or not"
     required: false
