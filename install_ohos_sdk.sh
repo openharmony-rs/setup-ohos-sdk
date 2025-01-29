@@ -103,14 +103,12 @@ function download_and_extract_sdk() {
       curl --fail -L -O "${DOWNLOAD_URL}.sha256"
     fi
 
-    VERSION_MAJOR=${INPUT_VERSION%%.*}
-
     if [[ "${OS}" == "mac" ]]; then
         echo "$(cat "${OS_FILENAME}".sha256)  ${OS_FILENAME}" | shasum -a 256 --check --status
         tar -xf "${OS_FILENAME}" --strip-components=3
     else
         echo "$(cat "${OS_FILENAME}".sha256) ${OS_FILENAME}" | sha256sum --check --status
-        if (( VERSION_MAJOR >= 5 )); then
+        if [[ "${INPUT_VERSION}" == "5.0.0" || "${INPUT_VERSION}" == "5.0.1" ]]; then
           tar -xf "${OS_FILENAME}"
         else
           tar -xf "${OS_FILENAME}" --strip-components=1
