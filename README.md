@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup OpenHarmony SDK
-        uses: openharmony-rs/setup-ohos-sdk@v0.1
+        uses: openharmony-rs/setup-ohos-sdk@v0.2
 ```
 
 ### Options
