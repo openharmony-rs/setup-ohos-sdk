@@ -39,3 +39,16 @@ jobs:
 | api-version     | String | API Version of the SDK (e.g. `12` for OpenHarmony 5.0.0, or `13` for OpenHarmony 5.0.1) |
 | sdk-version     | String | Specific SDK version (e.g. `4.1.7.5`)                                                   |
 | ohos_sdk_native | String | Path to the `native` directory in the OpenHarmony SDK.                                  |
+
+
+### Supported SDK versions
+
+This action supports installing the following SDK versions: 
+
+- `4.0` (API 10)
+- `4.1` (API 11)
+- `5.0.0` (API 12)
+- `5.0.1` (API 13)
+- `5.0.2` (API 14)
+- `5.0.3` (API 15)
+- `5.1.0` (API 18)
