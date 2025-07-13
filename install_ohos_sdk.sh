@@ -52,7 +52,7 @@ function extract_sdk_components() {
         echo "::group::Unzipping archive"
         #shellcheck disable=SC2144
         if [[ -f "${COMPONENT}" ]]; then
-          unzip "${COMPONENT}"
+          unzip -q "${COMPONENT}"
         else
           echo "Failed to find component ${COMPONENT}"
           ls -la
