@@ -118,9 +118,11 @@ function download_and_extract_sdk() {
 
     if [[ "${OS}" == "linux" ]]; then
         rm -rf windows
+        rm -rf ohos
         cd linux
     elif [[ "${OS}" == "windows" ]]; then
         rm -rf linux
+        rm -rf ohos
         cd windows
     else
         cd darwin
