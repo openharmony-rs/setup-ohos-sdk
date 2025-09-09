@@ -26,10 +26,12 @@ jobs:
 
 | Name       | Type    | Default | Description                                                                           |
 |------------|---------|---------|---------------------------------------------------------------------------------------|
-| version    | String  | 5.0.0   | Version of the OpenHarmony SDK (e.g. `4.0`, `4.1`, `5.0.0` or `5.0.1`)                |
+| version    | String  | 5.0.0   | Version of the OpenHarmony SDK (e.g. `5.0.0`, see the [Supported SDK versions] table. |
 | cache      | Boolean | true    | Uses the GitHub actions cache to cache the SDK when enabled.                          |
 | components | String  | all     | SDK components that should be added. `all` or semicolon seperated list of components. |
 | mirror     | Boolean | true    | Download from Github Releases mirror of the SDK if possible.                          |
+
+[Supported SDK versions]: #supported-sdk-versions
 
 **outputs**:
 
@@ -52,3 +54,4 @@ This action supports installing the following SDK versions:
 - `5.0.2` (API 14)
 - `5.0.3` (API 15)
 - `5.1.0` (API 18)
+- `6.0`   (API 20)
