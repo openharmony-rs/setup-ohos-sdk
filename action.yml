@@ -45,7 +45,7 @@ runs:
       run: echo "Cache ${{ inputs.cache }}, version ${{ inputs.version }}, components ${{ inputs.components }}, fixup ${{ inputs.fixup-path }}"
     - name: Cache SDK
       id: cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/setup-ohos-sdk
         key: "v1-${{ runner.os }}-ohos-sdk-${{ inputs.version }}-${{ inputs.components }}-${{ inputs.fixup-path }}"
