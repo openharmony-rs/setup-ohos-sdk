@@ -56,3 +56,4 @@ This action supports installing the following SDK versions:
 - `5.1.0` (API 18)
 - `6.0`   (API 20)
 - `6.0.0.1` (API 20)
+- `6.1` (API 23)
