@@ -110,7 +110,9 @@ function download_and_extract_sdk() {
         echo "$(cat "${OS_FILENAME}".sha256) ${OS_FILENAME}" | sha256sum --check --status
         if [[  "${INPUT_VERSION}" == "5.0.0" \
             || "${INPUT_VERSION}" == "5.0.1" \
-            || "${INPUT_VERSION}" == "6.0" ]];
+            || "${INPUT_VERSION}" == "6.0" \
+            || "${INPUT_VERSION}" == "6.1" \
+            ]];
         then
           tar -xf "${OS_FILENAME}"
         else
