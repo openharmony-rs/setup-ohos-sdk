@@ -161,7 +161,12 @@ else
   OHOS_SDK_NATIVE="${OHOS_BASE_SDK_HOME}/native"
 fi
 
-cd "${OHOS_SDK_NATIVE}"
+# Every component contains oh-uni-package.json. We default to native, but any other will do.
+if ! cd "${OHOS_SDK_NATIVE}" 2>/dev/null ; then
+  cd "${OHOS_NDK_HOME}"
+  component_dirs=(*/)
+  cd "${component_dirs[0]}"
+fi
 SDK_VERSION="$(jq -r .version < oh-uni-package.json )"
 API_VERSION="$(jq -r .apiVersion < oh-uni-package.json )"
 echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}" >> "$GITHUB_ENV"
